@@ -1,0 +1,10 @@
+.background {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: black;
+    background-image: url("images/background.svg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}

@@ -1,0 +1,156 @@
+.container1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-evenly;
+    width: 100vw;
+    margin-top: 80px;
+}
+
+.container2 {
+    display: flex;
+    gap: 50px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 30px;
+    width: 1400px;
+}
+
+.card {
+    display: flex;
+    padding-top: 20px;
+    align-items: center;
+    flex-direction: column;
+    background-color: black;
+    border-color: whitesmoke;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 20px;
+    height: 320px;
+    width: 250px;
+}
+
+.title {
+    display: flex;
+    text-align: center;
+    font-size: 32px;
+    padding: 10px 0px;
+    color: whitesmoke;
+    font-weight: bold;
+}
+
+.exercise {
+    display: flex;
+    flex-direction: row;
+    text-align: center;
+    align-items: center;
+    color: whitesmoke;
+    font-size: 20px;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none; /* Remove the spin buttons */
+    margin: 0; /* Prevent unwanted margin */
+}
+
+.change-amount {
+    font-size: 20px;
+    height: 30px;
+    width: 150px;
+}
+
+.submit-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.submit {
+    position: relative;
+    display: block;
+    width: 160px;
+    height: 36px;
+    border-radius: 18px;
+    background-color: #1c89ff;
+    border: solid 1px transparent;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 300;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        background-color: transparent;
+        border-color: #fff;
+        transition: all 0.3s ease-in-out;
+    }
+}
+
+.loader {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    margin: 10px;
+    height: 40px;
+    width: 40px;
+    border-color: white;
+    border-top-color: #1c89ff;
+    border-radius: 100%;
+    border-width: 3px;
+    border-style: solid;
+}
+
+.loader-hide {
+    border-color: black;
+    color: black;
+}
+
+.loader-active {
+    animation: loading 2s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+.checkmark {
+    height: 40px;
+    width: 40px;
+    transition: all 0.5s ease-in-out;
+}
+
+.checkmark-hide {
+    transform: translate(0px, 20px);
+    transition-duration: 0s;
+    opacity: 0%;
+}
+
+@keyframes loading {
+    30% {
+        opacity: 1;
+    }
+
+    85% {
+        opacity: 1;
+        transform: rotate(1080deg);
+        border-color: #262626;
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(1080deg);
+        border-color: #1c89ff;
+    }
+}
+
+.delete {
+    background-color: transparent;
+    padding: 10px 10px;
+    color: white;
+    border-radius: 30px;
+}

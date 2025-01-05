@@ -1,0 +1,11 @@
+.add_card {
+    height: 100px;
+    width: 100px;
+    border-radius: 30px;
+    background-color: darkgray;
+    margin: 30px;
+}
+
+.add_card:hover {
+    background-color: rgb(120, 120, 120);
+}

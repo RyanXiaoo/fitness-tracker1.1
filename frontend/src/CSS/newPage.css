@@ -1,0 +1,27 @@
+.centerForm {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    background-color: lightgray;
+    padding: 40px;
+    width: 350px;
+    border-radius: 30px;
+}
+
+.label_form {
+    background-color: blue;
+    padding: 10px;
+    font-size: 20px;
+    color: white;
+}
+
+.inputBox {
+    padding: 5px;
+    font-size: 14px;
+}
