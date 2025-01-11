@@ -26,10 +26,27 @@ export const getPage = async (req, res) => {
     }
 };
 
+export const getAllPages = async (req, res) => {
+    try {
+        const pages = await Page.find();
+
+        if (!pages || pages.length === 0) {
+            return res
+                .status(404)
+                .json({ success: false, message: "No pages found." });
+        }
+
+        res.status(200).json({ success: true, data: pages });
+    } catch (error) {
+        console.error("Error in fetching all pages: ", error.message);
+        res.status(500).json({ success: false, message: "Server Error" });
+    }
+};
+
 export const createPage = async (req, res) => {
     const page = req.body;
 
-    if (!page.title || !page.cards) {
+    if (!page.title || !page.link || !page.cards) {
         return res
             .status(400)
             .json({ success: false, message: "Please provide all fields" });
@@ -41,7 +58,7 @@ export const createPage = async (req, res) => {
         await newPage.save();
         res.status(201).json({ success: true, data: newPage });
     } catch (error) {
-        console.error("Error in Create page", error.message);
+        console.error("Error in Create page:", error.message);
         res.status(500).json({ success: false, message: "Server Error" });
     }
 };

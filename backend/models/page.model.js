@@ -7,6 +7,11 @@ const pageSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
+    link: {
+        type: String,
+        required: true,
+        unique: true,
+    },
     cards: {
         type: [cardSchema],
         required: true,

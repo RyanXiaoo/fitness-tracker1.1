@@ -4,9 +4,12 @@ import {
     getPage,
     createPage,
     deletePage,
+    getAllPages,
 } from "../controllers/page.controller.js";
 
 const router = express.Router();
+
+router.get("/", getAllPages);
 
 router.get("/:title", getPage);
 
