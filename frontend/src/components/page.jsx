@@ -8,18 +8,21 @@ const Page = (props) => {
                 {props.cardsinfo.map((card, cardIndex) => (
                     <Card
                         key={cardIndex}
-                        title={card.title}
+                        exercise={card.exercise}
                         amount={card.amount}
-                        setAmount={(newAmount) =>
-                            props.changeAmount(
-                                props.pageIndex,
-                                cardIndex,
-                                newAmount
-                            )
-                        }
+                        pageIndex={props.pageIndex}
+                        cardIndex={props.cardIndex}
+                        link={props.link}
+                        pages={props.pages}
                     />
                 ))}
-                <AddCard addcard={props.addCard} pageIndex={props.pageIndex} />
+                <AddCard
+                    addcard={props.addCard}
+                    pageIndex={props.pageIndex}
+                    cardIndex={props.cardsinfo.length}
+                    link={props.link}
+                    pages={props.pages}
+                />
             </div>
         </div>
     );

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./CSS/App.css";
 import "./CSS/navbar.css";
 import "./CSS/home.css";
@@ -12,41 +12,37 @@ import { usePageStore } from "./store/page";
 import { Link, Router, Routes, Route, BrowserRouter } from "react-router-dom";
 
 const App = () => {
-    const { pages, setPages } = usePageStore();
+    const { pages, updatePages, fetchAndMergePages } = usePageStore();
 
-    function changeAmount(pageIndex, cardIndex, newAmount) {
-        setPages((prevPages) => {
-            // Create a deep copy of the pages array
-            const updatedPages = [...prevPages];
-            // Update the specific card's amount
-            updatedPages[pageIndex].cards[cardIndex].amount = newAmount;
-            return updatedPages;
-        });
-    }
+    useEffect(() => {
+        console.log("Fetching pages...");
+        fetchAndMergePages().then(() => console.log("Pages fetched:", pages));
+    }, [fetchAndMergePages]);
 
-    function addCard(pageIndex, title, amount) {
-        for (let i = 0; i < pages[pageIndex].cards.length; i++) {
-            if (
-                pages[pageIndex].cards[i].title.toLowerCase() ===
-                title.toLowerCase()
-            ) {
-                alert("Duplicate exercise cannot be created");
-                return;
-            }
+    function addCard(pageIndex, exercise, amount) {
+        const currentCards = pages[pageIndex].cards;
+
+        // Check if any existing card matches the new exercise
+        const duplicate = currentCards.some(
+            (card) => card.exercise.toLowerCase() === exercise.toLowerCase()
+        );
+        if (duplicate) {
+            alert("Duplicate exercise cannot be created");
+            return;
         }
 
-        setPages((prevPages) => {
-            const copyPages = prevPages.map((page, index) => {
+        // If no duplicate, update the pages once
+        updatePages((prevPages) =>
+            prevPages.map((page, index) => {
                 if (index === pageIndex) {
                     return {
                         ...page,
-                        cards: [...page.cards, { title, amount }],
+                        cards: [...page.cards, { exercise, amount }],
                     };
                 }
                 return page;
-            });
-            return copyPages;
-        });
+            })
+        );
     }
 
     return (
@@ -55,20 +51,23 @@ const App = () => {
                 <Nav layout="not" />
                 <Routes>
                     <Route index element={<Home />} />
-                    {pages.map((page, pageIndex) => (
-                        <Route
-                            key={pageIndex}
-                            path={page.link}
-                            element={
-                                <Page
-                                    cardsinfo={page.cards}
-                                    pageIndex={pageIndex}
-                                    changeAmount={changeAmount}
-                                    addCard={addCard}
-                                />
-                            }
-                        />
-                    ))}
+                    {Array.isArray(pages) && pages.length > 0
+                        ? pages.map((page, pageIndex) => (
+                              <Route
+                                  key={pageIndex}
+                                  path={page.link}
+                                  element={
+                                      <Page
+                                          cardsinfo={page.cards}
+                                          pageIndex={pageIndex}
+                                          pages={pages}
+                                          addCard={addCard}
+                                          link={page.link}
+                                      />
+                                  }
+                              />
+                          ))
+                        : console.log(typeof pages)}
                     <Route path="/new_page" element={<NewPage />}></Route>
                 </Routes>
                 <Nav layout="fixed" />
@@ -88,8 +87,8 @@ function Nav(props) {
                 </Link>
             </div>
             <div className="rightnav">
-                {pages.map((page, index) => (
-                    <Link key={index} to={page.link} className="icon">
+                {pages.map((page) => (
+                    <Link key={page.link} to={page.link} className="icon">
                         {page.title}
                     </Link>
                 ))}

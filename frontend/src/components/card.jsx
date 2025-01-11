@@ -1,15 +1,67 @@
 import { useState } from "react";
+import { usePageStore } from "../store/page";
+import { base } from "../config/baseurl";
+import { updateAmount } from "../../../backend/controllers/card.controller";
 
 const Card = (props) => {
+    const { pages, setPages, removeCardFromPage, updateCardFromPage } =
+        usePageStore();
     const [inputValue, setInputValue] = useState("");
-
     const [status, setStatus] = useState(false);
     const [check, setCheck] = useState(false);
+    const pageTitle = props.link.toUpperCase();
+    const exercise = props.exercise;
+
+    const deleteCard = async () => {
+        try {
+            const requestData = { exercise, pageTitle };
+            const res = await fetch(`${base}/cards`, {
+                method: "DELETE",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify(requestData),
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                alert(data.message || "Failed to add card to the database.");
+                return;
+            }
+            removeCardFromPage(props.pageIndex, exercise);
+        } catch (error) {
+            console.error("Error adding card:", error);
+            alert("An error occurred. Please try again.");
+        }
+    };
+
+    const updateCard = async () => {
+        try {
+            const requestData = {
+                amount: Number(inputValue),
+                exercise,
+                pageTitle,
+            };
+            const res = await fetch(`${base}/cards`, {
+                method: "PUT",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify(requestData),
+            });
+            if (!res.ok) {
+                const data = await res.json();
+                alert(data.message || "Failed to add card to the database.");
+                return;
+            }
+            updateCardFromPage(props.pageIndex, exercise, inputValue);
+        } catch (error) {
+            console.error("Error updating card:", error);
+            alert("An error occurred. Please try again.");
+        }
+    };
 
     return (
         <div className="card">
-            <button className="delete">Delete</button>
-            <div className="title">{props.title}</div>
+            <button className="delete" onClick={deleteCard}>
+                Delete
+            </button>
+            <div className="title">{props.exercise}</div>
             <div className="exercise">Amount lifted: {props.amount} lbs</div>
             <input
                 type="number"
@@ -30,7 +82,7 @@ const Card = (props) => {
                                 setTimeout(() => {
                                     setCheck(false);
                                     setStatus(false);
-                                    props.setAmount(Number(inputValue));
+                                    updateCard();
                                     setInputValue("");
                                 }, 2000);
                             }, 3000);

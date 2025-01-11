@@ -1,26 +1,64 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { usePageStore } from "../store/page";
+import { base } from "../config/baseurl";
 
 const AddCard = (props) => {
-    const [cardTitle, setCardTitle] = useState("");
-    const [cardAmount, setCardAmount] = useState();
+    const { pages, fetchAndMergePages, setPages } = usePageStore();
+    const pageTitle = props.link.toUpperCase();
+
+    const [newCard, setNewCard] = useState({
+        exercise: "",
+        amount: 0,
+        pageTitle: pageTitle,
+    });
+
     const [status, setStatus] = useState(false);
     const [check, setCheck] = useState(false);
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        props.addcard(
-            props.pageIndex,
-            cardTitle.toUpperCase(),
-            Number(cardAmount) // Ensure it's a number
-        );
+    const handleNewCard = async (event) => {
+        event.preventDefault(); // Ensure the form doesn't reload the page
 
-        setCardTitle("");
-        setCardAmount();
+        if (!newCard.exercise || newCard.amount <= 0) {
+            alert("Please fill out all fields correctly");
+            return;
+        }
+
+        try {
+            // First update the database
+            const requestData = { ...newCard, pageTitle };
+            const res = await fetch(`${base}/cards`, {
+                method: "POST",
+                headers: { "Content-type": "application/json" },
+                body: JSON.stringify(requestData),
+            });
+
+            if (!res.ok) {
+                const data = await res.json();
+                alert(data.message || "Failed to add card to the database.");
+                return;
+            }
+
+            const data = await res.json();
+
+            // Update the local state only if the database update succeeds
+            props.addcard(
+                props.pageIndex,
+                data.data.exercise,
+                data.data.amount
+            );
+
+            alert("Card added successfully!");
+            setNewCard({ exercise: "", amount: 0, pageTitle }); // Reset form
+        } catch (error) {
+            console.error("Error adding card:", error);
+            alert("An error occurred. Please try again.");
+        }
     };
 
     return (
         <div className="addcard">
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleNewCard}>
                 <div className="flip-card-inner">
                     <div className="flip-front-card">
                         <svg
@@ -46,11 +84,14 @@ const AddCard = (props) => {
                         <input
                             className="inputField"
                             type="text"
-                            id="title"
-                            name="title"
-                            value={cardTitle}
+                            id="exercise"
+                            name="exercise"
+                            value={newCard.exercise}
                             onChange={(event) =>
-                                setCardTitle(event.target.value)
+                                setNewCard({
+                                    ...newCard,
+                                    exercise: event.target.value.toUpperCase(),
+                                })
                             }
                             required
                         />
@@ -62,44 +103,18 @@ const AddCard = (props) => {
                             type="number"
                             id="amount"
                             name="amount"
-                            value={cardAmount || ""}
+                            value={newCard.amount}
                             onChange={(event) =>
-                                setCardAmount(+event.target.value)
+                                setNewCard({
+                                    ...newCard,
+                                    amount: event.target.value,
+                                })
                             }
                             required
                             min="0"
                         />
                         <div className="submit-container">
-                            <button
-                                className="submit"
-                                onClick={() => {
-                                    if (
-                                        cardTitle === "" ||
-                                        cardAmount === "" ||
-                                        cardAmount === empty
-                                    ) {
-                                        alert(
-                                            "At least one of the following fields are incomplete"
-                                        );
-                                    } else {
-                                        setStatus(true);
-                                        setTimeout(() => {
-                                            setCheck(true);
-                                            setTimeout(() => {
-                                                setCheck(false);
-                                                setStatus(false);
-                                                props.setAmount(
-                                                    Number(inputValue)
-                                                );
-                                                setInputValue("");
-                                            }, 2000);
-                                        }, 3000);
-                                    }
-                                }}
-                            >
-                                {" "}
-                                Submit
-                            </button>
+                            <button className="submit">Submit</button>
                         </div>
                     </div>
                 </div>

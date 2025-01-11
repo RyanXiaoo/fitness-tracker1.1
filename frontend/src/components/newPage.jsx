@@ -29,7 +29,8 @@ const NewPage = (props) => {
                     onChange={(event) => {
                         setNewPage({
                             ...newPage,
-                            title: event.target.value,
+                            title: event.target.value.toUpperCase(),
+                            link: event.target.value.toLowerCase(),
                         });
                     }}
                 />
